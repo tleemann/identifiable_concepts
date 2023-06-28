@@ -1,4 +1,4 @@
-
+# Call 3dshapes_hypersearch[].sh <beta> <corr sigma> <corrfeature1> <corrfeature2> <runid>
 echo "Using lambda_od=$1, corr=$2"
 if [ -z ${3+x} ]; then RUNID="0"; else RUNID=$3; fi
 NAME="DIPVAE_lambda-$1_Corr-$2_R${RUNID}"

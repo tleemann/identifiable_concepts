@@ -10,12 +10,13 @@ The following steps are required to run the code in this repository using a dedi
 ### Creating an Anaconda Environment
 Make sure you have a working installation of anaconda on your system and go to the main directory of this repository in your terminal.
 Then install the requirements into a new conda environment named ```identifiable_concepts``` run the following commands 
-```conda env create -f environment.yml
+```
+conda env create -f environment.yml
 ```
 
 Then run
 ```
-   conda activate identifiable_concepts
+conda activate identifiable_concepts
 ```
 
 ### Downloading datasets
@@ -28,9 +29,37 @@ Then run the script ``scripts/3dshapes_to_npz.py`` in this repo from the folder 
 **MPI3D**
 [Todo: add instructions for MPI3d]
 
+## Experiments with Toy datasets (Section 4.1)
+
+## Experiments with Disentanglement Models (Section 4.2, Section 4.3)
+
+### Training models
+To train the models that we used in our work, we provide scripts in the folder ``scripts``. For training the models with two correlated factors in Section 4.2, we provide four scripts named ```3dshapes_hypersearch<ModelArchitecture>_fact.sh```.
+For example, they can be called as follows:
+```
+export OUTPUT="."; export DSET_PATH="datasets/Disentanglement"; ./scripts/3dshapes_hypersearchBetaVAE_fact.sh 4 0.7 1 0 0
+```
+
+The first part of the command sets the corresponding environment variables to store the output and to read the datasets respectively.
+
+The five arguments to the script are 
+* The hyperparameter value. See Table 4 in the appendix of our paper for details.
+* The correlation strength. We use the values 0.2, 0.4 (in the main paper), 0.7 and inf.
+* The index of the first correlated factor
+* The index of the second correlated factor. We use the combintations (1, 0 = floor, background / 5, 0 = orientation, background / 3, 5 = size, orientation) on 3dshapes.
+* A suffix that is appended to the output file to indicate the run number during multiple executions of the script (could be 0, 1, 2, ... or A, B, C, ...)
+
+### Running the post-hoc concept discovery IMA/DMA
+
+## Experiments with Discriminative Models (Section 4.4)
+
+## Experiments on CUB-200 (Section 4.5)
+
+
 ## Credits
 We would like to thank the authors of several other code bases that contributed to this work.
 This repository was built on the [```disentanglement-pytorch```]((https://github.com/amir-abdi/disentanglement-pytorch) repository.
+
 Most of the evaluation metrics are taken from [```disentanglement_lib```](https://github.com/google-research/disentanglement_lib).
 
 ## Citation
