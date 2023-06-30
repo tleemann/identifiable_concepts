@@ -53,8 +53,6 @@ class CustomLogger:
         if "optim" in run_params_non_opt: del run_params_non_opt["optim"]
         if "lr" in run_params_non_opt: del run_params_non_opt["lr"]
         if "batchsize" in run_params_non_opt: del run_params_non_opt["batchsize"]
-        if "orth_samples" in run_params_non_opt: del run_params_non_opt["orth_samples"]
-        #if "n_agg" in run_params_non_opt: del run_params_non_opt["n_agg"]
 
         run_str = [str(k)+ "-" + str(v) for (k,v) in run_params_non_opt.items()]
         run_str = "_".join(run_str)

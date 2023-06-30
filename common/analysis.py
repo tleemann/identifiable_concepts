@@ -64,61 +64,61 @@ from copy import deepcopy
 #     return ret_mat
 
 
-# def gt_concept_directions_by_variance(dataset: DisentanglementLibDataset, model, n_samples = 20, denormalize = False, factor_means=None):
-#     """ 
-#         Return the ground truth directions for each concept.
-#         I this method, all but one ground truth factor is kept constant. The images
-#         are encoded then. On the encodings a truncated PCA is run, i.e., only the the first
-#         principal direction with highest variance is returned.
-#         returns a tuple with the direction and the factor values that are used as a basis of the transformation.
-#     """
-#     factor_values = dataset.dataset.factors_num_values
-#     if factor_means is None:
-#         print(dataset.dataset.factors_num_values)
-#         #factor_means = torch.tensor([5, 5, 5, 4, 2, 7])
-#         factor_means = np.array([int(factor_value/2) for factor_value in factor_values])
-#         #data_mean = dataset.sample_observations_from_factors(factor_means.reshape(1,-1))
-#         #mean_tensor = torch.from_numpy(np.moveaxis(data_mean, 3, 1), ).type(torch.FloatTensor)
-#         #encs_mean = model.encode_deterministic(images = mean_tensor.to(model.device))
-#         #print(encs_mean)
-#     ret_mat = torch.zeros(model.z_dim, len(factor_values))
-#     ret_mags = torch.zeros(len(factor_values))
-#     for i in range(len(factor_values)):
-#         # sample random factor values.
-#         r_samples = torch.randint(0, factor_values[i], (n_samples,))
-#         #r_samples[r_samples==factor_means[i]] = factor_values[i]-1 # set means to last value.
-#         #print("Samples:", r_samples)
-#         cng_factor = np.tile(factor_means.copy().reshape(1,-1), (n_samples, 1))
-#         cng_factor[:, i] = r_samples.numpy()
-#         #print(cng_factor)
-#         data_batch = dataset.sample_observations_from_factors(cng_factor)
-#         #print(data_batch.shape)
-#         batch_tensor = torch.from_numpy(np.moveaxis(data_batch, 3, 1), ).type(torch.FloatTensor)
-#         with torch.no_grad():
-#             encs = model.encode_deterministic(images = batch_tensor.to(model.device)).detach()
-#         #encs = 0.1*encs + torch.mean(encs, dim=0, keepdim=True)
-#         #encs[:, i] += 5*torch.randn(len(encs), device=model.device)
-#         #print(encs)
-#         # Find direction of highest variance in encodings.
-#         ediff = (encs-torch.mean(encs, dim=0, keepdim=True))
-#         #print(ediff)
-#         #ediff /= torch.norm(ediff, dim=1, keepdim=True)
-#         cov_mat = ediff.t().matmul(ediff)
-#         #import matplotlib.pyplot as plt
-#         #plt.matshow(cov_mat.cpu())
-#         # print(cov_mat.shape)
-#         #print(cov_mat)
-#         vals, S = torch.symeig(cov_mat, eigenvectors=True)
-#         print("Eigenvalues: ", vals.cpu().numpy())
-#         ret_mat[:,i] = S[:, -1]
-#         ret_mags[i] = vals[-1]
-#     if denormalize:
-#         #print(ret_mags)
-#         mags = torch.sqrt(ret_mags)
-#         mags_norms = len(mags)*mags/torch.sum(mags)
-#         #print(mags_norms)
-#         ret_mat *= mags_norms.reshape(1,-1)
-#     return ret_mat, factor_means
+def gt_concept_directions_by_variance(dataset: DisentanglementLibDataset, model, n_samples = 20, denormalize = False, factor_means=None):
+    """ 
+        Return the best ground truth directions for each concept.
+        In this method, all but one factor is kept constant but one factor is filled with random values. The images
+        are encoded then. On the encodings a truncated PCA is run, i.e., only the the first
+        principal direction with highest variance is returned.
+        returns a tuple with the direction and the factor values that are used as a basis of the transformation.
+    """
+    factor_values = dataset.dataset.factors_num_values
+    if factor_means is None:
+        print(dataset.dataset.factors_num_values)
+        #factor_means = torch.tensor([5, 5, 5, 4, 2, 7])
+        factor_means = np.array([int(factor_value/2) for factor_value in factor_values])
+        #data_mean = dataset.sample_observations_from_factors(factor_means.reshape(1,-1))
+        #mean_tensor = torch.from_numpy(np.moveaxis(data_mean, 3, 1), ).type(torch.FloatTensor)
+        #encs_mean = model.encode_deterministic(images = mean_tensor.to(model.device))
+        #print(encs_mean)
+    ret_mat = torch.zeros(model.z_dim, len(factor_values))
+    ret_mags = torch.zeros(len(factor_values))
+    for i in range(len(factor_values)):
+        # sample random factor values.
+        r_samples = torch.randint(0, factor_values[i], (n_samples,))
+        #r_samples[r_samples==factor_means[i]] = factor_values[i]-1 # set means to last value.
+        #print("Samples:", r_samples)
+        cng_factor = np.tile(factor_means.copy().reshape(1,-1), (n_samples, 1))
+        cng_factor[:, i] = r_samples.numpy()
+        #print(cng_factor)
+        data_batch = dataset.sample_observations_from_factors(cng_factor)
+        #print(data_batch.shape)
+        batch_tensor = torch.from_numpy(np.moveaxis(data_batch, 3, 1), ).type(torch.FloatTensor)
+        with torch.no_grad():
+            encs = model.encode_deterministic(images = batch_tensor.to(model.device)).detach()
+        #encs = 0.1*encs + torch.mean(encs, dim=0, keepdim=True)
+        #encs[:, i] += 5*torch.randn(len(encs), device=model.device)
+        #print(encs)
+        # Find direction of highest variance in encodings.
+        ediff = (encs-torch.mean(encs, dim=0, keepdim=True))
+        #print(ediff)
+        #ediff /= torch.norm(ediff, dim=1, keepdim=True)
+        cov_mat = ediff.t().matmul(ediff)
+        #import matplotlib.pyplot as plt
+        #plt.matshow(cov_mat.cpu())
+        # print(cov_mat.shape)
+        #print(cov_mat)
+        vals, S = torch.symeig(cov_mat, eigenvectors=True)
+        print("Eigenvalues: ", vals.cpu().numpy())
+        ret_mat[:,i] = S[:, -1]
+        ret_mags[i] = vals[-1]
+    if denormalize:
+        #print(ret_mags)
+        mags = torch.sqrt(ret_mags)
+        mags_norms = len(mags)*mags/torch.sum(mags)
+        #print(mags_norms)
+        ret_mat *= mags_norms.reshape(1,-1)
+    return ret_mat, factor_means
 
 
 # def gt_regres_binary_directions(model, concept_fn, sample_epochs = 100, uncorr_loader = True):
@@ -177,19 +177,19 @@ def gt_get_binary_score_matrix(model, concept_fn, dirs, sample_epochs = 100, unc
             res[j, k] = rfc1.score(inputs.numpy(), fact_list[:, k].numpy())
     return res
 
-# def get_eigenspace_directions(model, data_loader, num_dirs, iters=50, denormalize=True):
-#     """ Return the n_dirs principal directions of the latent space,
-#         denormalized by their variance, such that the variance when multiplied with these
-#         directions is approximately unit.
-#         return [Z_dim, num_dirs] matrix with num dir column vectors.
-#     """
-#     #num_dirs = 4
-#     eigvects, eigvals = compute_pca(model, data_loader, iters)
-#     if denormalize:
-#         init_matrix = eigvects[:,:num_dirs]*eigvals[:num_dirs].unsqueeze(0).pow(-0.5)
-#     else:
-#         init_matrix = eigvects[:,:num_dirs]
-#     return init_matrix
+def get_eigenspace_directions(model, data_loader, num_dirs, iters=50, denormalize=True):
+    """ Return the n_dirs principal directions of the latent space,
+        denormalized by their variance, such that the variance when multiplied with these
+        directions is approximately unit.
+        return [Z_dim, num_dirs] matrix with num dir column vectors.
+    """
+    #num_dirs = 4
+    eigvects, eigvals = compute_pca(model, data_loader, iters)
+    if denormalize:
+        init_matrix = eigvects[:,:num_dirs]*eigvals[:num_dirs].unsqueeze(0).pow(-0.5)
+    else:
+        init_matrix = eigvects[:,:num_dirs]
+    return init_matrix
 
 def get_ica_directions(model, data_loader, num_dirs, iters=50):
     """ Compute principal direction using Independent Component Analysis (ICA). """

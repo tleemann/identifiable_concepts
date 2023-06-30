@@ -51,7 +51,59 @@ The five arguments to the script are
 
 ### Running the post-hoc concept discovery IMA/DMA
 
+To run IMA and DMA, we provide the script ```discover_concepts.py```, which implements our methods.
+To discover concept post-hoc on trained disentanglement models with the scripts in the folder ```scripts```discussed in the previous section, we can use the script ```3dshapes_PosthocDiscover.sh``` as follows (again setting some environment variables) by running
+
+```
+export LOGDIR="search_results"; \
+export DSET_PATH="datasets/Disentanglement"; \
+export CHECKPOINTDIR="checkpoints"; \
+./scripts/3dshapes_PosthocDiscover.sh BetaTCVAE_wtc-10_Corr-0.4_R0 grad 0.4 0 1
+```
+
+in the terminal. 
+
+The five arguments to the script are 
+
+* The name of the checkpoint created by the training script
+* The attribution method used to compute the gradient matrix $J_f$ (default ```grad``` used and described in the paper)
+* The correlation strength. We use the values 0.2, 0.4 (in the main paper), 0.7 and inf.
+* The index of the first correlated factor
+* The index of the second correlated factor. We use the combintations (1, 0 = floor, background / 5, 0 = orientation, background / 3, 5 = size, orientation) on 3dshapes.
+
 ## Experiments with Discriminative Models (Section 4.4)
+
+To train a discriminative models used in our work, we provide the script ```3dshapes_Discriminative.sh``` in the folder ```scripts```. It can be called as follows
+
+```
+export OUTPUT="."; \
+export DSET_PATH="datasets/Disentanglement"; \
+./scripts/3dshapes_Discriminative.sh 0.2 -1 0 
+```
+
+where the three arguments provided to the script are
+* The correlation strength. We use the values 0.1, 0.15, 0.2, and inf.
+* Our code provides the opportunity to pass partial factor annotations to the model. However, we do not use this feature for this work and pass a value of -1 (meaning that the training works without any factors annotations in a fully unsupervised manner.)
+*  A suffix that is appended to the output file to indicate the run number during multiple executions of the script (could be 0, 1, 2, ... or A, B, C, ...)
+
+### Post-hoc concept discovery on the discriminative models.
+
+Having trained a discriminative model with the above instructions, we can run our post-hoc methods with the following script
+
+```
+export LOGDIR="search_results"; \
+export DSET_PATH="datasets/Disentanglement"; \
+export CHECKPOINTDIR="checkpoints"; \
+./scripts/3dshapes_DiscriminativePosthoc.sh 0.2 -1 0 grad
+```
+
+where the four arguments provided to the script are
+* The correlation strength. We use the values 0.1, 0.15, 0.2, and inf.
+* Our code provides the opportunity to pass partial factor annotations to the model. However, we do not use this feature for this work and pass a value of -1 (meaning that the training works without any factors annotations in a fully unsupervised manner.)
+*  A suffix that is appended to the output file to indicate the run number during multiple executions of the script (could be 0, 1, 2, ... or A, B, C, ...)
+* The attribution method used to compute the gradient matrix $J_f$ (default ```grad``` used in the paper)
+
+The resulting evaluation scores will be stored in the folder ```search_results```.
 
 ## Experiments on CUB-200 (Section 4.5)
 

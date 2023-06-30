@@ -15,7 +15,7 @@ def update_args(args):
 
 
 def get_args(sys_args):
-    """ Argument parsing for the training routines. """
+    """ Argument parsing for the training routines. (main.py) """
     parser = argparse.ArgumentParser(description='disentanglement-pytorch')
 
     # NeurIPS2019 AICrowd Challenge
@@ -190,7 +190,7 @@ def get_args(sys_args):
     return args
 
 def get_args_search(sysargs):
-    """ Get arguements for the hyperparameter search. """
+    """ Get arguements for the hyperparameter search. (discover_concepts.py) """
     parser = argparse.ArgumentParser(description='orthogonal attributions parameter search')
     # General Setup
     parser.add_argument('--recompute_baselines', default=False, type=bool, help='do not run optimization, only recompute the baselines.')
@@ -220,9 +220,8 @@ def get_args_search(sysargs):
     parser.add_argument('--overwrite_cor_list', default=False, type=str2bool, help='if true and filter_fn=normal_distr, correlate corr_feature1 and corr_feature2 instead of the hardcoded list.')
     parser.add_argument('--oversampling_factor', default=3, type=int, help='how many batches to actually sample for resampling the data.')
     
-
-    # Attribution methods
-    parser.add_argument('--attribution', default = "ig", type=str, help='attribution method to use: grad, ig, sg, gen')
+    # Loss functions and attribution methods
+    parser.add_argument('--attribution', default = "grad", type=str, help='attribution method to use: grad, ig, sg')
     parser.add_argument('--norm', default = True, type=str2bool, help='normalize attribution before computing loss')
     parser.add_argument('--disjoint', default = True, type=str2bool, help='use disjoint attributions (False = use orthogonal attributions)')
     parser.add_argument('--losstype', default = "offdiagl2", type=str, help='losstype to use for SGD methods: offdiagl2, detloss, logdetloss')
@@ -232,8 +231,6 @@ def get_args_search(sysargs):
     parser.add_argument('--evaliter', default = 2000, type=int, help='interval for evaluation')
     parser.add_argument('--logdir', default = "search_results", type=str, help='output save path')
     parser.add_argument('--dsetdir', default = ".", type=str, help='dataset directory from DLIB')
-    parser.add_argument('--checkpointfileA', default = ".", type=str, help='path to the checkpoint A')
-    parser.add_argument('--checkpointfileB', default = ".", type=str, help='path to the checkpoint B')
 
     args = parser.parse_args(sysargs)
     return args

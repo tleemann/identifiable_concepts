@@ -21,7 +21,7 @@ python3 main.py \
 --batch_size 64 \
 --all_iter 20000 \
 --oversampling_factor 3 \
---evaluation_metric factor_vae_metric mig \
+--evaluation_metric factor_vae_metric dci sap_score \
 --test_output_dir=$OUTPUT/test_output \
 --train_output_dir=$OUTPUT/train_output \
 --ckpt_dir=$OUTPUT/checkpoints
