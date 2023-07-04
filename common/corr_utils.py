@@ -4,6 +4,7 @@ import torch
 import cv2
 import numpy as np
 import math
+import logging
 
 def isPD(B):
     """Returns true when input is positive-definite, via Cholesky
@@ -36,7 +37,7 @@ def get_normal_distr(sigma: float, n_cor: int, num_factor_levels: list, pairs: l
         for feature1, feature2 in pairs[:n_cor]:
             cov[feature1, feature2] = sigma * torch.sqrt(cov[feature1, feature1] * cov[feature2, feature2])
             cov[feature2, feature1] = cov[feature1, feature2]
-    print("Using sigma={} to ensure positive definiteness of covariance matrix".format(sigma))
+    logging.info("Using corr={:.3f} to ensure positive definiteness of covariance matrix".format(sigma))
 
     cov_inv = cov.inverse()
 

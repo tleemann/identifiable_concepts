@@ -1,7 +1,6 @@
-# Call 3dshapes_hypersearch[].sh <beta> <corr sigma> <corrfeature1> <corrfeature2> <runid>
-echo "Using w_tc=$1, corr=$2"
-if [ -z ${3+x} ]; then RUNID="0"; else RUNID=$3; fi
-NAME="SBetaTCVAE_wtc-$1_Corr-$2_R${RUNID}"
+# Call 3dshapes_hypersearch[].sh <beta> <runid> <corr method> <corr sigma> <corrfeature1> <corrfeature2> <number corr features>
+echo "Using w_tc=$1, corr=$4"
+NAME="SBetaTCVAE_wtc-$1_Corr-$4_R$2"
 python3 main.py \
 --name=$NAME \
 --alg=BetaVAE \
@@ -14,9 +13,11 @@ python3 main.py \
 --decoder=SimpleConv64 \
 --z_dim=6 \
 --use_wandb=false \
---sigma_corr $2 \
---corr_feature1 $4 \
---corr_feature2 $5 \
+--filter_fn $3 \
+--sigma_corr $4 \
+--corr_feature1 $5 \
+--corr_feature2 $6 \
+--n_cor $7 \
 --w_kld=1.0 \
 --w_tc=$1 \
 --lr_G=0.0001 \

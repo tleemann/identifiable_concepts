@@ -34,20 +34,22 @@ Then run the script ``scripts/3dshapes_to_npz.py`` in this repo from the folder 
 ## Experiments with Disentanglement Models (Section 4.2, Section 4.3)
 
 ### Training models
-To train the models that we used in our work, we provide scripts in the folder ``scripts``. For training the models with two correlated factors in Section 4.2, we provide four scripts named ```3dshapes_hypersearch<ModelArchitecture>_fact.sh```.
+To train the models that we used in our work in Section 4.2 and 4.3, we provide scripts in the folder ``scripts``. First, we train the models with correlated factors in four scripts named ```3dshapes_hypersearch<ModelArchitecture>_fact.sh```.
 For example, they can be called as follows:
 ```
-export OUTPUT="."; export DSET_PATH="datasets/Disentanglement"; ./scripts/3dshapes_hypersearchBetaVAE_fact.sh 4 0.7 1 0 0
+export OUTPUT="."; export DSET_PATH="datasets/Disentanglement"; ./scripts/3dshapes_hypersearchBetaVAE_fact.sh 4 0 pair 0.7 1 0 0
 ```
 
 The first part of the command sets the corresponding environment variables to store the output and to read the datasets respectively.
 
-The five arguments to the script are 
-* The hyperparameter value. See Table 4 in the appendix of our paper for details.
-* The correlation strength. We use the values 0.2, 0.4 (in the main paper), 0.7 and inf.
-* The index of the first correlated factor
-* The index of the second correlated factor. We use the combintations (1, 0 = floor, background / 5, 0 = orientation, background / 3, 5 = size, orientation) on 3dshapes.
+The seven arguments to the script are 
+* The hyperparameter value of the method. See Table 4 in the appendix of our paper for details.
 * A suffix that is appended to the output file to indicate the run number during multiple executions of the script (could be 0, 1, 2, ... or A, B, C, ...)
+* Which correlation to use: `normal_distr` for a normal distribution and `pair` for correlating just two factors
+* The correlation strength. We use the values 0.2, 0.4 (in the main paper), 0.7 and inf. Note that for `pair`, lower means more correlated and inf means uncorrelated, whereas for `normal_distr`, 0 means uncorrelated and 1 means fully correlated.
+* In case of `pair`: The index of the first correlated factor
+* In case of `pair`: The index of the second correlated factor. We use the combintations (1, 0 = floor, background / 5, 0 = orientation, background / 3, 5 = size, orientation) on 3dshapes.
+* In case of `normal_distr`: how many pairwise correlations to add to the covariance matrix (0 to 15). Note that for some combinations, the correlation strength is lowered automatically until the covariance matrix is positive definite. The script will log this.
 
 ### Running the post-hoc concept discovery IMA/DMA
 
@@ -58,18 +60,20 @@ To discover concept post-hoc on trained disentanglement models with the scripts 
 export LOGDIR="search_results"; \
 export DSET_PATH="datasets/Disentanglement"; \
 export CHECKPOINTDIR="checkpoints"; \
-./scripts/3dshapes_PosthocDiscover.sh BetaTCVAE_wtc-10_Corr-0.4_R0 grad 0.4 0 1
+./scripts/3dshapes_PosthocDiscover.sh BetaTCVAE_wtc-10_Corr-0.4_R0 grad pair 0.4 0 1 0
 ```
 
 in the terminal. 
 
-The five arguments to the script are 
+The seven arguments to the script are 
 
 * The name of the checkpoint created by the training script
 * The attribution method used to compute the gradient matrix $J_f$ (default ```grad``` used and described in the paper)
-* The correlation strength. We use the values 0.2, 0.4 (in the main paper), 0.7 and inf.
-* The index of the first correlated factor
-* The index of the second correlated factor. We use the combintations (1, 0 = floor, background / 5, 0 = orientation, background / 3, 5 = size, orientation) on 3dshapes.
+* Which correlation to use: `normal_distr` for a normal distribution and `pair` for correlating just two factors
+* The correlation strength. We use the values 0.2, 0.4 (in the main paper), 0.7 and inf. Note that for `pair`, lower means more correlated and inf means uncorrelated, whereas for `normal_distr`, 0 means uncorrelated and 1 means fully correlated.
+* In case of `pair`: The index of the first correlated factor
+* In case of `pair`: The index of the second correlated factor. We use the combintations (1, 0 = floor, background / 5, 0 = orientation, background / 3, 5 = size, orientation) on 3dshapes.
+* In case of `normal_distr`: how many pairwise correlations to add to the covariance matrix (0 to 15). Note that for some combinations, the correlation strength is lowered automatically until the covariance matrix is positive definite. The script will log this.
 
 ## Experiments with Discriminative Models (Section 4.4)
 

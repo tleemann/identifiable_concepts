@@ -1,6 +1,6 @@
-# Call 3dshapes_hypersearch[].sh <beta> <corr sigma> <corrfeature1> <corrfeature2> <runid>
-echo "Using wtc=$1, corr=$2"
-NAME="FactorVAE_wtc-$1_Corr-$2_R$3"
+# Call 3dshapes_hypersearch[].sh <beta> <runid> <corr method> <corr sigma> <corrfeature1> <corrfeature2> <number corr features>
+echo "Using wtc=$1, corr=$4"
+NAME="FactorVAE_wtc-$1_Corr-$4_R$2"
 python3 main.py \
 --name=$NAME \
 --alg=BetaVAE \
@@ -18,9 +18,11 @@ python3 main.py \
 --lr_G=0.002 \
 --lr_scheduler=ReduceLROnPlateau \
 --lr_scheduler_args mode=min factor=0.8 patience=0 min_lr=0.000001 \
---sigma_corr $2 \
---corr_feature1 $4 \
---corr_feature2 $5 \
+--filter_fn $3 \
+--sigma_corr $4 \
+--corr_feature1 $5 \
+--corr_feature2 $6 \
+--n_cor $7 \
 --max_iter 300000 \
 --all_iter 20000 \
 --oversampling_factor 3 \

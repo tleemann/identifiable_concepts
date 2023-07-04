@@ -71,7 +71,8 @@ class BaseDisentangler(object):
         # Setup of the data generating process.
         # Assign correlation and labeling function
         if args.sigma_corr < 10.0 and args.filter_fn != "normal_distr":
-            logging.info("Inducing correlation of strength sigma = " + str(args.sigma_corr))
+            logging.info("Inducing correlation of strength sigma = " + str(args.sigma_corr) +
+                         " between variables " + str(args.corr_feature1) + " and " + str(args.corr_feature2))
             correlation_function =  sigma_correlation(args.sigma_corr, args.corr_feature1, args.corr_feature2, dataset_str=args.dset_name)
         else:
             correlation_function = None # No correlation is introduced (for performance reasons)
@@ -88,6 +89,8 @@ class BaseDisentangler(object):
                     correlation_function_filter = lambda input_features: correlation_function(input_features)*filter_function(input_features)
                 self.filter_fn = filter_function
             elif args.filter_fn == "normal_distr":
+                logging.info("Inducing normal distribution with " + str(args.n_cor) +
+                             " correlated variables with targeted correlation of " + str(args.sigma_corr))
                 if args.overwrite_cor_list and (args.corr_feature1 is not None) and (args.corr_feature2 is not None):
                     pairs = [[args.corr_feature1, args.corr_feature2]]
                 else:
@@ -97,7 +100,7 @@ class BaseDisentangler(object):
                         num_factor_levels=[10, 10, 10, 8, 4, 15], pairs=pairs) # [7, 7, 7, 5, 3, 10]
                 if correlation_function is not None:
                     logging.warn("correlation_function is overwritten when using a normal filter.")  
-            elif args.filter_fn == "None":
+            elif args.filter_fn == "None" or args.filter_fn == "pair":
                 correlation_function_filter = correlation_function
         else:
             correlation_function_filter = correlation_function  
