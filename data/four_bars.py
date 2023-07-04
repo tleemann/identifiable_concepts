@@ -9,7 +9,7 @@ import os
 import torch
 import math
 
-class BarToy(ground_truth_data.GroundTruthData):
+class ColorBar(ground_truth_data.GroundTruthData):
     """ A toy dataset with a bar that can change its width, position and color.
         This dataset is referred to as ColorBar in the paper in shown in Figure 3b.
         FoV:
@@ -115,7 +115,7 @@ class BarToy(ground_truth_data.GroundTruthData):
         return sample_matrix if ret_torch else sample_matrix.numpy()
 
 
-class FourBarsSimple(ground_truth_data.GroundTruthData):
+class FourBars(ground_truth_data.GroundTruthData):
     """ FourBars toy dataset (shown in Figure 3a).
         Each FoV is a bar that moves up and down while changing colors from white to black.
     """
