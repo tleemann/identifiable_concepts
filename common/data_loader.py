@@ -8,7 +8,7 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
 from data.shapes3d_gaussian import Shapes3DGaussian
-from data.four_bars import FourBarsSimple, BarToy
+from data.four_bars import FourBars, ColorBar
 from common import constants as c
 
 class LabelHandler(object):
